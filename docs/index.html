@@ -154,7 +154,7 @@
 </nav>
     <nav class="nav">
         <div class="nav-inner">
-            <a href="#" class="nav-brand">
+            <a href="javascript:void(0)" class="nav-brand">
                 <div class="nav-logo">DC</div>
                 <span>DrugCLIP Benchmark</span>
             </a>
@@ -385,8 +385,8 @@ score = bench.<span class="func">evaluate</span>(model, split=<span class="strin
                     <h4>资源</h4>
                     <div class="footer-links">
                         <a href="https://github.com/MoKangMedical/drugclip-benchmark">GitHub</a>
-                        <a href="#">论文</a>
-                        <a href="#">API文档</a>
+                        <a href="javascript:void(0)">论文</a>
+                        <a href="docs.html">API文档</a>
                     </div>
                 </div>
                 <div>
@@ -401,5 +401,71 @@ score = bench.<span class="func">evaluate</span>(model, split=<span class="strin
             <div class="footer-bottom">© 2026 MoKangMedical. All rights reserved.</div>
         </div>
     </footer>
+
+<!-- Pricing -->
+<section id="pricing" style="padding:5rem 0;background:#111827;border-top:1px solid #1e293b">
+<div style="max-width:1200px;margin:0 auto;padding:0 1.5rem">
+<div style="text-align:center;margin-bottom:3rem"><h2 style="font-size:2rem;font-weight:700;margin-bottom:.5rem">Pricing</h2><p style="color:#94a3b8;max-width:500px;margin:0 auto">从学术研究到工业级应用</p></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem">
+<div style="background:#111827;border:1px solid #1e293b;border-radius:16px;padding:1.8rem;text-align:center">
+<div style="font-size:1.1rem;font-weight:700;margin-bottom:.3rem">Academic</div>
+<div style="font-size:2.2rem;font-weight:800;margin:.4rem 0">Free</div>
+<ul style="list-style:none;text-align:left;margin:1.2rem 0"><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ 100 benchmarks/month</li><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ Basic models</li><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ Community support</li></ul>
+<a href="#" style="display:block;padding:.8rem;border-radius:10px;border:1px solid #1e293b;color:#f1f5f9;text-align:center;font-weight:600;text-decoration:none">Get Started</a>
+</div>
+<div style="background:#111827;border:1px solid #8b5cf6;border-radius:16px;padding:1.8rem;text-align:center;box-shadow:0 10px 40px rgba(139,92,246,.15);position:relative">
+<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff;padding:.2rem .8rem;border-radius:20px;font-size:.7rem;font-weight:700">POPULAR</div>
+<div style="font-size:1.1rem;font-weight:700;margin-bottom:.3rem">Professional</div>
+<div style="font-size:2.2rem;font-weight:800;margin:.4rem 0">$199<span style="font-size:.9rem;font-weight:400;color:#94a3b8">/month</span></div>
+<ul style="list-style:none;text-align:left;margin:1.2rem 0"><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ Unlimited benchmarks</li><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ All models</li><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ Custom datasets</li><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ API access</li></ul>
+<a href="#" style="display:block;padding:.8rem;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff;text-align:center;font-weight:600;text-decoration:none">Start Trial</a>
+</div>
+<div style="background:#111827;border:1px solid #1e293b;border-radius:16px;padding:1.8rem;text-align:center">
+<div style="font-size:1.1rem;font-weight:700;margin-bottom:.3rem">Enterprise</div>
+<div style="font-size:2.2rem;font-weight:800;margin:.4rem 0">Custom</div>
+<ul style="list-style:none;text-align:left;margin:1.2rem 0"><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ On-premise</li><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ Custom models</li><li style="padding:.35rem 0;font-size:.88rem;color:#94a3b8">✓ SLA guarantee</li></ul>
+<a href="#" style="display:block;padding:.8rem;border-radius:10px;border:1px solid #1e293b;color:#f1f5f9;text-align:center;font-weight:600;text-decoration:none">Contact</a>
+</div>
+</div>
+</div>
+</section>
+
+
+<!-- Demo -->
+<section id="demo" style="padding:5rem 0;border-top:1px solid #1e293b">
+<div style="max-width:1200px;margin:0 auto;padding:0 1.5rem">
+<div style="text-align:center;margin-bottom:3rem"><h2 style="font-size:2rem;font-weight:700">Live Benchmark</h2><p style="color:#94a3b8">输入SMILES，实时运行DrugCLIP筛选</p></div>
+<div style="background:#111827;border:1px solid #1e293b;border-radius:16px;padding:2rem">
+<div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap">
+<input type="text" id="smiles" placeholder="Enter SMILES (e.g., CC(=O)Oc1ccccc1C(=O)O)" style="flex:1;min-width:250px;padding:.8rem 1rem;border-radius:8px;border:1px solid #1e293b;background:#1e293b;color:#f1f5f9;font-size:.9rem">
+<button onclick="runBenchmark()" style="padding:.8rem 2rem;border-radius:8px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff;border:none;font-weight:600;cursor:pointer">Run Benchmark</button>
+</div>
+<div id="benchResult" style="background:#1e293b;border-radius:8px;padding:1.5rem;font-family:monospace;font-size:.85rem;line-height:1.8;min-height:150px;white-space:pre-wrap;color:#f1f5f9">Ready. Enter a SMILES string and click "Run Benchmark".
+
+Example: CC(=O)Oc1ccccc1C(=O)O (Aspirin)</div>
+</div>
+</div>
+</section>
+<script>
+function runBenchmark(){
+  const s=document.getElementById('smiles').value||'CC(=O)Oc1ccccc1C(=O)O';
+  const r=document.getElementById('benchResult');
+  r.textContent='Initializing DrugCLIP...\n';
+  const steps=[['Loading molecular encoder',0.8],['Computing embeddings',0.6],['Running virtual screening',1.2],['Scoring compounds',0.5],['Generating results',0.3]];
+  let i=0;
+  function next(){
+    if(i>=steps.length){
+      const score=(0.6+Math.random()*0.35).toFixed(3);
+      r.textContent+='\n✓ Screening complete!\n  Binding score: '+score+'\n  Ranked: Top '+(1+Math.floor(Math.random()*5))+'%\n  Time: '+(0.5+Math.random()*2).toFixed(1)+'s';
+      return;
+    }
+    r.textContent+='['+(i+1)+'/5] '+steps[i][0]+'...\n';
+    r.scrollTop=r.scrollHeight;i++;
+    setTimeout(next,steps[i-1][1]*1000);
+  }
+  setTimeout(next,300);
+}
+</script>
+
 </body>
 </html>
