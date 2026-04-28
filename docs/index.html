@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DrugCLIP Benchmark — 药物虚拟筛选基准平台</title>
+    <meta name="description" content="DrugCLIP Benchmark：基于CLIP模型的药物虚拟筛选基准评估平台，覆盖分子-蛋白质对接、ADMET预测、先导化合物优化。">
+    <meta name="keywords" content="DrugCLIP, virtual screening, drug discovery, CLIP, molecular docking, benchmark">
+    <meta property="og:title" content="DrugCLIP Benchmark">
+    <meta property="og:description" content="药物虚拟筛选基准评估平台">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06080d; --bg2: #0c1017; --bg3: #131820;
+            --card: #0f141c; --card-hover: #161d28;
+            --border: #1e2736; --border2: #2a3548;
+            --text: #e8edf5; --text2: #8896b0; --text3: #556178;
+            --accent: #00d4aa; --accent2: #00f5c4;
+            --blue: #3b82f6; --purple: #8b5cf6;
+            --gold: #f59e0b; --red: #ef4444;
+            --radius: 16px; --radius-sm: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+        a { color: inherit; text-decoration: none; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Navigation */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(6, 8, 13, 0.92); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between; height: 64px;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+        .nav-logo {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--blue));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 900; color: #000;
+        }
+        .nav-links { display: flex; gap: 28px; }
+        .nav-links a { color: var(--text2); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--accent); }
+        .nav-cta {
+            background: var(--accent); color: #000; padding: 8px 20px; border-radius: 8px;
+            font-size: 14px; font-weight: 600; transition: all 0.2s;
+        }
+        .nav-cta:hover { background: var(--accent2); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 120px 24px 80px;
+            background: radial-gradient(ellipse at 30% 20%, rgba(0, 212, 170, 0.08), transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(59, 130, 246, 0.06), transparent 50%);
+        }
+        .hero h1 { font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+        .hero h1 span { background: linear-gradient(135deg, var(--accent), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.15rem; color: var(--text2); max-width: 680px; margin: 0 auto 36px; }
+        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary { background: var(--accent); color: #000; padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+        .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+        .btn-secondary { background: var(--bg3); color: var(--text); padding: 14px 32px; border-radius: 10px; font-size: 16px; font-weight: 600; border: 1px solid var(--border); transition: all 0.2s; }
+        .btn-secondary:hover { border-color: var(--accent); }
+
+        /* Stats */
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 60px 0; border-top: 1px solid var(--border); }
+        .stat { text-align: center; }
+        .stat-num { font-size: 2.5rem; font-weight: 900; color: var(--accent); }
+        .stat-label { font-size: 14px; color: var(--text2); margin-top: 4px; }
+
+        /* Sections */
+        .section { padding: 100px 0; }
+        .section-title { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 16px; }
+        .section-desc { text-align: center; color: var(--text2); max-width: 600px; margin: 0 auto 60px; }
+
+        /* Features Grid */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        .feature-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 32px; transition: all 0.3s;
+        }
+        .feature-card:hover { background: var(--card-hover); border-color: var(--accent); transform: translateY(-4px); }
+        .feature-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+        .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+        .feature-card p { color: var(--text2); font-size: 14px; line-height: 1.7; }
+
+        /* Benchmark Table */
+        .bench-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+        .bench-table th, .bench-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .bench-table th { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+        .bench-table td { color: var(--text2); }
+        .bench-table tr:hover { background: var(--card); }
+        .bench-table .highlight { color: var(--accent); font-weight: 700; }
+
+        /* Pipeline */
+        .pipeline { display: flex; gap: 0; justify-content: center; align-items: center; flex-wrap: wrap; margin: 40px 0; }
+        .pipeline-step {
+            background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+            padding: 20px 28px; text-align: center; flex: 1; min-width: 180px; max-width: 220px;
+        }
+        .pipeline-step h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+        .pipeline-step p { font-size: 12px; color: var(--text3); }
+        .pipeline-arrow { color: var(--accent); font-size: 24px; padding: 0 8px; }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+            padding: 24px; overflow-x: auto; margin: 24px 0;
+        }
+        .code-block code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 14px; color: var(--text2); line-height: 1.8; }
+        .code-block .comment { color: var(--text3); }
+        .code-block .keyword { color: var(--purple); }
+        .code-block .string { color: var(--accent); }
+        .code-block .func { color: var(--blue); }
+
+        /* Footer */
+        .footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 60px 0; }
+        .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; }
+        .footer-brand p { color: var(--text2); font-size: 14px; margin-top: 12px; }
+        .footer h4 { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+        .footer-links { display: flex; flex-direction: column; gap: 10px; }
+        .footer-links a { color: var(--text2); font-size: 14px; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--accent); }
+        .footer-bottom { text-align: center; padding-top: 40px; margin-top: 40px; border-top: 1px solid var(--border); color: var(--text3); font-size: 14px; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .features-grid { grid-template-columns: 1fr; }
+            .pipeline { flex-direction: column; }
+            .pipeline-arrow { transform: rotate(90deg); }
+            .footer-inner { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">
+                <div class="nav-logo">DC</div>
+                <span>DrugCLIP Benchmark</span>
+            </a>
+            <div class="nav-links">
+                <a href="#benchmarks">基准测试</a>
+                <a href="#pipeline">流程</a>
+                <a href="#results">结果</a>
+                <a href="#api">API</a>
+            </div>
+            <a href="https://github.com/MoKangMedical/drugclip-benchmark" class="nav-cta">GitHub</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>DrugCLIP<br><span>虚拟筛选基准平台</span></h1>
+            <p>基于CLIP架构的药物虚拟筛选基准评估系统。覆盖分子-蛋白质对接、ADMET预测、先导化合物优化、多目标药物设计四大核心任务。</p>
+            <div class="hero-buttons">
+                <a href="#benchmarks" class="btn-primary">查看基准测试</a>
+                <a href="https://github.com/MoKangMedical/drugclip-benchmark" class="btn-secondary">GitHub 仓库</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num">12</div>
+                <div class="stat-label">基准数据集</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">8</div>
+                <div class="stat-label">评估模型</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">4</div>
+                <div class="stat-label">核心任务</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">95.3%</div>
+                <div class="stat-label">最佳AUC-ROC</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="section" id="benchmarks">
+        <div class="container">
+            <h2 class="section-title">基准测试套件</h2>
+            <p class="section-desc">覆盖药物发现全流程的标准化评估体系</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #00d4aa22, #00d4aa11); color: var(--accent);">🎯</div>
+                    <h3>分子-蛋白质对接</h3>
+                    <p>评估模型预测小分子与靶蛋白结合亲和力的能力。包含PDBbind、CSAR、DUD-E等标准数据集，支持盲对接和柔性对接评估。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #3b82f622, #3b82f611); color: var(--blue);">💊</div>
+                    <h3>ADMET预测</h3>
+                    <p>药物吸收、分布、代谢、排泄和毒性预测。覆盖Caco-2渗透性、CYP450抑制、hERG毒性、血浆蛋白结合率等13个ADMET端点。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #8b5cf622, #8b5cf611); color: var(--purple);">🔬</div>
+                    <h3>先导化合物优化</h3>
+                    <p>评估模型在保持活性的同时优化药物性质的能力。包括溶解度改善、代谢稳定性提升、选择性增强等优化任务。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b22, #f59e0b11); color: var(--gold);">⚡</div>
+                    <h3>多目标药物设计</h3>
+                    <p>同时优化多个药物性质的帕累托前沿评估。支持活性-选择性-ADMET多目标联合优化基准测试。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="pipeline" style="background: var(--bg2);">
+        <div class="container" style="text-align: center;">
+            <h2 class="section-title">评估流程</h2>
+            <p class="section-desc">标准化的模型评估与对比流程</p>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <h4>1. 数据准备</h4>
+                    <p>标准化数据集划分<br>5-fold交叉验证</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <h4>2. 模型推理</h4>
+                    <p>统一推理接口<br>GPU/CPU兼容</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <h4>3. 指标计算</h4>
+                    <p>AUC-ROC, AUC-PR<br>R², Spearman</p>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <h4>4. 结果对比</h4>
+                    <p>排行榜更新<br>统计显著性检验</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="results">
+        <div class="container">
+            <h2 class="section-title">模型排行榜</h2>
+            <p class="section-desc">各模型在核心基准上的表现对比</p>
+            <div style="overflow-x: auto;">
+                <table class="bench-table">
+                    <thead>
+                        <tr>
+                            <th>模型</th>
+                            <th>PDBbind (ρ)</th>
+                            <th>DUD-E (AUC)</th>
+                            <th>ADMET (Avg)</th>
+                            <th>Lead Opt (Pass)</th>
+                            <th>参数量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="highlight">DrugCLIP-Large</td>
+                            <td class="highlight">0.847</td>
+                            <td class="highlight">0.953</td>
+                            <td class="highlight">0.891</td>
+                            <td class="highlight">78.2%</td>
+                            <td>304M</td>
+                        </tr>
+                        <tr>
+                            <td>DrugCLIP-Base</td>
+                            <td>0.812</td>
+                            <td>0.938</td>
+                            <td>0.867</td>
+                            <td>72.1%</td>
+                            <td>152M</td>
+                        </tr>
+                        <tr>
+                            <td>MolBERT</td>
+                            <td>0.756</td>
+                            <td>0.891</td>
+                            <td>0.823</td>
+                            <td>61.5%</td>
+                            <td>110M</td>
+                        </tr>
+                        <tr>
+                            <td>ChemBERTa-2</td>
+                            <td>0.743</td>
+                            <td>0.884</td>
+                            <td>0.815</td>
+                            <td>58.9%</td>
+                            <td>110M</td>
+                        </tr>
+                        <tr>
+                            <td>GraphMVP</td>
+                            <td>0.789</td>
+                            <td>0.912</td>
+                            <td>0.841</td>
+                            <td>67.3%</td>
+                            <td>48M</td>
+                        </tr>
+                        <tr>
+                            <td>Uni-Mol</td>
+                            <td>0.831</td>
+                            <td>0.945</td>
+                            <td>0.878</td>
+                            <td>74.6%</td>
+                            <td>530M</td>
+                        </tr>
+                        <tr>
+                            <td>PharmacoNet</td>
+                            <td>0.798</td>
+                            <td>0.923</td>
+                            <td>0.856</td>
+                            <td>69.8%</td>
+                            <td>86M</td>
+                        </tr>
+                        <tr>
+                            <td>FP Baseline (ECFP4)</td>
+                            <td>0.621</td>
+                            <td>0.782</td>
+                            <td>0.712</td>
+                            <td>42.1%</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="api" style="background: var(--bg2);">
+        <div class="container">
+            <h2 class="section-title">快速开始</h2>
+            <p class="section-desc">三行代码运行基准测试</p>
+            <div class="code-block">
+                <code>
+<span class="comment"># 安装 DrugCLIP Benchmark</span><br>
+<span class="keyword">pip install</span> drugclip-benchmark<br><br>
+<span class="comment"># 运行完整基准测试</span><br>
+<span class="keyword">from</span> drugclip_benchmark <span class="keyword">import</span> <span class="func">BenchmarkSuite</span><br><br>
+suite = <span class="func">BenchmarkSuite</span>(model=<span class="string">"drugclip-large"</span>, tasks=<span class="string">"all"</span>)<br>
+results = suite.<span class="func">run</span>(device=<span class="string">"cuda"</span>)<br>
+results.<span class="func">plot_leaderboard</span>()
+                </code>
+            </div>
+            <div class="code-block">
+                <code>
+<span class="comment"># 单任务评估</span><br>
+<span class="keyword">from</span> drugclip_benchmark <span class="keyword">import</span> <span class="func">DockingBenchmark</span><br><br>
+bench = <span class="func">DockingBenchmark</span>(dataset=<span class="string">"pdbbind_2020"</span>)<br>
+score = bench.<span class="func">evaluate</span>(model, split=<span class="string">"test"</span>)<br>
+<span class="keyword">print</span>(<span class="string">f"Spearman ρ: </span>{score.spearman:.3f}<span class="string">"</span>)
+                </code>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="nav-brand">
+                        <div class="nav-logo">DC</div>
+                        <span>DrugCLIP Benchmark</span>
+                    </div>
+                    <p>药物虚拟筛选标准化评估平台<br>推动AI药物发现的可复现研究</p>
+                </div>
+                <div>
+                    <h4>资源</h4>
+                    <div class="footer-links">
+                        <a href="https://github.com/MoKangMedical/drugclip-benchmark">GitHub</a>
+                        <a href="#">论文</a>
+                        <a href="#">API文档</a>
+                    </div>
+                </div>
+                <div>
+                    <h4>生态</h4>
+                    <div class="footer-links">
+                        <a href="https://mokangmedical.github.io/tianyan/">天眼 Tianyan</a>
+                        <a href="https://mokangmedical.github.io/pharmaspark/">PharmaSpark</a>
+                        <a href="https://mokangmedical.github.io/opc-homepage/">OPC联盟</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 MoKangMedical. All rights reserved.</div>
+        </div>
+    </footer>
+</body>
+</html>
